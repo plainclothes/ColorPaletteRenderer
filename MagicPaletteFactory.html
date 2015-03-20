@@ -1,0 +1,160 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+    <title>Colors <3 Javascript</title>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type = "text/javascript">
+      /*
+      = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+      jQ plugin to select range of text on single click
+      -
+      it works, but it's a little sketchy some of the time
+      = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+      */
+      $(document).ready(function()
+      {                  
+        $.fn.oneClickSelect = function(){
+          return $(this).click(function(){
+             var range, selection;
+             if (window.getSelection) {
+                selection = window.getSelection();        
+                range = document.createRange();
+                range.selectNodeContents(this);
+                selection.removeAllRanges();
+                selection.addRange(range);
+              } else if (document.body.createTextRange) {
+                  range = document.body.createTextRange();
+                  range.moveToElementText(this);
+                  range.select();
+              }
+          });
+        };
+        $('.selectable').oneClickSelect();
+      })
+    </script>
+    <script type = "text/javascript">
+      /*
+      = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+      Render an array of hex values as individual swatches in the form of divs
+      = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+      */
+      
+      // Pass the container ID and the array of color values
+      function writePalette(container,paletteArray) {
+        for(var i in paletteArray) {
+          if (paletteArray[i] == 'break') {
+            var rowBreak = document.createElement('div');
+            rowBreak.setAttribute('class','br')
+            document.getElementById(container).appendChild(rowBreak);
+          }
+          else {
+            var thisColor = paletteArray[i],
+                swatchDiv = document.createElement('div');
+            // .selectable ties the label to the jQ plug-in
+            swatchDiv.setAttribute('class','swatch selectable');
+            // support for the single click jQ plug-in (loaded separately)
+            swatchDiv.setAttribute('onclick','$(this).oneClickSelect()');
+            swatchDiv.setAttribute('style','background-color:'+thisColor);
+            swatchDiv.innerHTML = '<span class="value">'+thisColor+'</span>';
+            document.getElementById(container).appendChild(swatchDiv);
+          }
+        }
+      }
+    </script>
+    <style>
+      #swatchContainer {
+        max-width: 1092px;
+        margin: 36px auto;
+      }
+      @media (max-device-width: 480px) {
+        #swatchContainer {
+          max-width: 360px;
+          box-sizing: border-box;
+        }
+      }
+      ::selection {
+        background: none repeat scroll 0% 0% rgba(127, 255, 0, 0.9);
+      }
+      ::-moz-selection {
+        background: none repeat scroll 0% 0% rgba(127, 255, 0, 0.9);
+      }
+      div.br {
+        content: " ";
+        display: block;
+        clear: both;
+      }
+      div.swatch {
+        height: 132px;
+        width: 132px;
+        float: left;
+        display: inline-block;
+        margin: 24px 24px 0 0;
+        padding: 0;
+        border-radius: 4px;
+        font-family: 'Source Code Pro';
+      }
+      span.value {
+        display: inline-block;
+        width: 100%;
+        margin: 36px auto 0;
+        color: #fff;
+        font-size: 12px;
+        text-align: center;
+        text-shadow: 0 0 4px rgba(0,0,0,.9);
+      }
+      h1, h2 {
+        float: left;
+        clear: both;
+        width: 100%;
+        color: #555;
+        font-family: 'Source Code Pro';
+      }
+      h1{
+        font-size: 18px;
+        font-weight: 700;
+      }
+      h2 {
+        margin: 24px 0 0;
+        font-size: 14px;
+        font-weight: 400;
+      }
+      h1>span {
+        font-size: 10px;
+        padding: 2px 4px;
+        background-color: #fc6;
+        color:#fff;
+        margin-left: 9px;
+        text-transform: uppercase;
+        vertical-align: middle;
+        border-radius: 3px;
+      }
+    </style>
+    <link href='//fonts.googleapis.com/css?family=Source+Code+Pro:400,700' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+    <div id="swatchContainer">
+      <h1>The magic interwebs color palette<span>beta</span></h1>
+      <div id="swatches01">
+        <h2>You could start with these colors</h2>
+        <script type="text/javascript">
+          writePalette(
+            'swatches01',
+            ['red','#b00','#b00b00','#900','#400','break',
+             '#bad','#bada55', 'break',
+             '#decaff', '#c0ffee','#f09','teal']
+          );
+        </script>
+      </div>
+      <div id="swatches02">
+        <h2>And switch to these when you change your mind</h2>
+        <script type="text/javascript">
+          writePalette(
+            'swatches02',
+            ['#5ad','pink','#587', 'orange','break',
+             'grey','#caacaa','#60061e','rgba(96,0,112,.6)']
+          );
+        </script>
+      </div>
+    </div>
+  </body>
+</html>
